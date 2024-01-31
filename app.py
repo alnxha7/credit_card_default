@@ -43,7 +43,7 @@ def predict():
 
     if mongo.db:
         # Save the prediction result to the MongoDB collection
-        
+
         New_database = {
             'Gender': features[0],
             'Education': features[1],
