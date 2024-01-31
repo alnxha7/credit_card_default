@@ -7,10 +7,14 @@ import pickle
 app = Flask(__name__)
 model = pickle.load(open('model.pkl', 'rb'))
 
-app.config['MONGO_URI'] = 'mongodb+srv://alns4rha:Alansha%40123@cluster0.najsjgs.mongodb.net/?retryWrites=true&w=majority'
+app.config['MONGO_URI'] = 'mongodb+srv://alns4rha:Alansha@cluster0.najsjgs.mongodb.net/'
 
 mongo = PyMongo(app)
-Collection_1 = mongo.db.Collection_1
+
+if mongo.db:
+    Collection_1 = mongo.db.Collection_1
+else:
+    print("Error: MongoDB connection failed")
 
 @app.route('/')
 def home():
@@ -18,6 +22,9 @@ def home():
 
 @app.route('/predict', methods=['POST'])
 def predict():
+
+    # Collection_1 = mongo.db.Collection_1
+
     '''
     for rendering results on HTML
     '''
@@ -33,31 +40,40 @@ def predict():
     #newdb.insert_one(d)
     print("features is :",features)
     default_payment=prediction.tolist()
-    New_database={'Gender':features[0],
-                 'Education':features[1],
-                 'Marrital Status':features[2],
-                 'Age':features[3],
-                 'Limit Balance':features[4],
-                 'PAY_1':features[5],
-                 'PAY_2':features [6],
-                 'PAY_3':features [7],
-                 'PAY_4':features [8],
-                 'PAY_5':features [9],
-                 'PAY_6':features [10],
-                 'BILL_AMT1':features [11],
-                 'BILL_AMT2':features [12],
-                 'BILL_AMT3':features [13],
-                 'BILL_AMT4':features [14],
-                 'BILL_AMT5':features [15],
-                 'BILL_AMT6':features [16],
-                 'PAY_AMT1':features[17],
-                 'PAY_AMT2':features[18],
-                 'PAY_AMT3':features [19],
-                 'PAY_AMT4':features[20],
-                 'PAY_AMT5':features[21],
-                 'PAY_AMT6':features[22],
-                 'Prediction':default_payment[0]}
-    Collection_1.insert_one(New_database)
+
+    if mongo.db:
+        # Save the prediction result to the MongoDB collection
+        
+        New_database = {
+            'Gender': features[0],
+            'Education': features[1],
+            'Marrital Status': features[2],
+            'Age': features[3],
+            'Limit Balance': features[4],
+            'PAY_1': features[5],
+            'PAY_2': features[6],
+            'PAY_3': features[7],
+            'PAY_4': features[8],
+            'PAY_5': features[9],
+            'PAY_6': features[10],
+            'BILL_AMT1': features[11],
+            'BILL_AMT2': features[12],
+            'BILL_AMT3': features[13],
+            'BILL_AMT4': features[14],
+            'BILL_AMT5': features[15],
+            'BILL_AMT6': features[16],
+            'PAY_AMT1': features[17],
+            'PAY_AMT2': features[18],
+            'PAY_AMT3': features[19],
+            'PAY_AMT4': features[20],
+            'PAY_AMT5': features[21],
+            'PAY_AMT6': features[22],
+            'Prediction': default_payment[0]
+        }
+        Collection_1.insert_one(New_database)
+        print("Document inserted successfully")
+    else:
+        print("Error: MongoDB connection not available")
    
     print("prediction value: ", prediction)
 
