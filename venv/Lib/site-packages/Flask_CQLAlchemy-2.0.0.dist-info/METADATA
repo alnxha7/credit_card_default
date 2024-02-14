@@ -1,0 +1,44 @@
+Metadata-Version: 2.1
+Name: Flask-CQLAlchemy
+Version: 2.0.0
+Summary: Flask-CQLAlchemy handles connections to Cassandra clusters and provides an interface through cqlengine
+Home-page: http://thegeorgeous.com/flask-cqlalchemy
+Author: George Thomas
+Author-email: iamgeorgethomas@gmail.com
+License: ISC
+Keywords: cassandra cqlengine flask
+Platform: any
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Environment :: Web Environment
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: ISC License (ISCL)
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: Implementation :: CPython
+Classifier: Programming Language :: Python :: Implementation :: PyPy
+Classifier: Framework :: Flask
+Classifier: Topic :: Internet :: WWW/HTTP :: Dynamic Content
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+License-File: LICENSE
+License-File: AUTHORS
+Requires-Dist: cassandra-driver (>=3.22.0)
+
+
+Flask-CQLAlchemy
+----------------
+
+Flask-CQLAlchemy handles connections to Cassandra clusters and provides a
+Flask-SQLAlchemy like interface to declare models and their columns in a Flask
+app.
+
+Links
+`````
+
+* `Documentation <https://flask-cqlalchemy.readthedocs.org/>`_
+
+
