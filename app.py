@@ -4,6 +4,7 @@ from cassandra.cluster import Cluster
 from cassandra.auth import PlainTextAuthProvider
 import pickle
 import json
+import uuid
 
 app = Flask(__name__)
 model = pickle.load(open('model.pkl', 'rb'))
@@ -24,10 +25,11 @@ session = cluster.connect()
 keyspace_name = 'collection_1'
 session.set_keyspace(keyspace_name)
 
-table_name = 'credit_card_new'
+table_name = 'credit_card'
 
 create_table_query = f"""
 CREATE TABLE IF NOT EXISTS {keyspace_name}.{table_name} (
+    id UUID PRIMARY KEY,
     gender INT,
     education INT,
     marrital_status INT,
@@ -51,8 +53,7 @@ CREATE TABLE IF NOT EXISTS {keyspace_name}.{table_name} (
     pay_amt4 INT,
     pay_amt5 INT,
     pay_amt6 INT,
-    prediction INT,
-    PRIMARY KEY (gender, education, marrital_status, age, limit_balance)
+    prediction INT
 )
 """
 session.execute(create_table_query)
@@ -79,13 +80,13 @@ def predict():
 
     query = f"""
     INSERT INTO {table_name} (
-    gender, education, marrital_status, age, limit_balance,
+    id, gender, education, marrital_status, age, limit_balance,
     pay_1, pay_2, pay_3, pay_4, pay_5, pay_6,
     bill_amt1, bill_amt2, bill_amt3, bill_amt4, bill_amt5, bill_amt6,
     pay_amt1, pay_amt2, pay_amt3, pay_amt4, pay_amt5, pay_amt6, prediction
 )
 VALUES (
-    :gender, :education, :marrital_status, :age, :limit_balance,
+    uuid(), :gender, :education, :marrital_status, :age, :limit_balance,
     :pay_1, :pay_2, :pay_3, :pay_4, :pay_5, :pay_6,
     :bill_amt1, :bill_amt2, :bill_amt3, :bill_amt4, :bill_amt5, :bill_amt6,
     :pay_amt1, :pay_amt2, :pay_amt3, :pay_amt4, :pay_amt5, :pay_amt6, :prediction
@@ -94,6 +95,7 @@ VALUES (
 
 # Ensure that the parameters dictionary includes all required keys
     parameters = {
+    'id': uuid.uuid4(),  # Generate a new UUID for the 'id' column
     'gender': features[0],
     'education': features[1],
     'marrital_status': features[2],
@@ -124,11 +126,11 @@ VALUES (
     try:
         session.execute(
         f"INSERT INTO {keyspace_name}.{table_name} "
-        "(gender, education, marrital_status, age, limit_balance, "
+        "(id, gender, education, marrital_status, age, limit_balance, "
         "pay_1, pay_2, pay_3, pay_4, pay_5, pay_6, "
         "bill_amt1, bill_amt2, bill_amt3, bill_amt4, bill_amt5, bill_amt6, "
         "pay_amt1, pay_amt2, pay_amt3, pay_amt4, pay_amt5, pay_amt6, prediction) "
-        "VALUES (%(gender)s, %(education)s, %(marrital_status)s, %(age)s, %(limit_balance)s, "
+        "VALUES (%(id)s, %(gender)s, %(education)s, %(marrital_status)s, %(age)s, %(limit_balance)s, "
         "%(pay_1)s, %(pay_2)s, %(pay_3)s, %(pay_4)s, %(pay_5)s, %(pay_6)s, "
         "%(bill_amt1)s, %(bill_amt2)s, %(bill_amt3)s, %(bill_amt4)s, %(bill_amt5)s, %(bill_amt6)s, "
         "%(pay_amt1)s, %(pay_amt2)s, %(pay_amt3)s, %(pay_amt4)s, %(pay_amt5)s, %(pay_amt6)s, %(prediction)s)",
