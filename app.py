@@ -5,6 +5,7 @@ from cassandra.auth import PlainTextAuthProvider
 import pickle
 import json
 import uuid
+import os
 
 app = Flask(__name__)
 model = pickle.load(open('model.pkl', 'rb'))
@@ -12,7 +13,12 @@ model = pickle.load(open('model.pkl', 'rb'))
 cloud_config= {
   'secure_connect_bundle': 'secure-connect-credit-card.zip'
 }
-with open("credit_card-token.json") as f:
+token_file_path = "credit_card-token.json"
+if not os.path.isfile(token_file_path):
+    print(f"Error: File not found: {token_file_path}")
+    exit(1)
+
+with open(token_file_path) as f:
     secrets = json.load(f)
 
 CLIENT_ID = secrets["clientId"]
@@ -151,5 +157,8 @@ VALUES (
 
     return render_template('index.html', prediction_text=result)
 
+# if __name__ == '__main__':
+#     app.run(debug=True, use_reloader=False)
+
 if __name__ == '__main__':
-    app.run(debug=True, use_reloader=False)
+    app.run(host='0.0.0.0', port=8080)
